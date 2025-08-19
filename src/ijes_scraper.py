@@ -406,8 +406,11 @@ class IJESScraper:
         """
         logger.info(f"Starting scrape for Volume {volume}, Issue {issue}")
         
-        # Create directory for this issue
-        issue_dir = self.base_dir / f"vol{volume}" / f"iss{issue}"
+        # Create directory for this issue with new naming format
+        # Volume folder: "IJES Volume 18" instead of "vol18"
+        # Issue folder: "IJES 18-1" instead of "iss1"
+        volume_dir = self.base_dir / f"IJES Volume {volume}"
+        issue_dir = volume_dir / f"IJES {volume}-{issue}"
         issue_dir.mkdir(parents=True, exist_ok=True)
         
         # Get article links
