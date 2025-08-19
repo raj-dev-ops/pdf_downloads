@@ -43,7 +43,7 @@ REQUEST_TIMEOUT = 30  # seconds
 class IJESScraper:
     """Scraper for the International Journal of Exercise Science website."""
     
-    def __init__(self, base_dir: str = "downloads"):
+    def __init__(self, base_dir: str = r"C:\Users\Deva Sravan\Desktop\IJES"):
         """
         Initialize the scraper.
         
@@ -456,7 +456,7 @@ class IJESScraper:
 @click.command()
 @click.option('--volume', '-v', required=True, type=int, help='Volume number')
 @click.option('--issue', '-i', required=True, type=int, help='Issue number')
-@click.option('--output-dir', '-o', default='downloads', help='Output directory (default: downloads)')
+@click.option('--output-dir', '-o', default=r'C:\Users\Deva Sravan\Desktop\IJES', help='Output directory (default: C:\\Users\\Deva Sravan\\Desktop\\IJES)')
 @click.option('--verbose', is_flag=True, help='Enable verbose logging')
 def main(volume: int, issue: int, output_dir: str, verbose: bool):
     """
