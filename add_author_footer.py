@@ -71,8 +71,8 @@ def add_footer_to_pdf(pdf_path, footer_text, output_path=None):
     footer_x = 53.86  # 19mm margin from left (19mm * 72/25.4)
     footer_y = 56.69  # 20mm from bottom (20mm * 72/25.4)
 
-    # Calculate text width to fit background rectangle
-    text_width = can.stringWidth(footer_text, FOOTER_FONT, 10)
+    # Calculate text width to fit background rectangle (add space for superscript *)
+    text_width = can.stringWidth(footer_text, FOOTER_FONT, 10) + 8  # Extra space for superscript
 
     # Add white background rectangle behind footer text (sized to fit text)
     can.setFillColorRGB(1, 1, 1)
@@ -82,7 +82,20 @@ def add_footer_to_pdf(pdf_path, footer_text, output_path=None):
     # Color: #943634 (RGB: 148/255, 54/255, 52/255)
     can.setFillColorRGB(148/255, 54/255, 52/255)
     can.setFont(FOOTER_FONT, 10)
-    can.drawString(footer_x, footer_y, footer_text)
+
+    # Draw asterisk as superscript before "Corresponding"
+    if "Corresponding" in footer_text:
+        # Draw superscript asterisk
+        can.setFont(FOOTER_FONT, 7)  # Smaller font for superscript
+        can.drawString(footer_x, footer_y + 3, "*")  # Raised position
+
+        # Draw main text starting after the asterisk
+        can.setFont(FOOTER_FONT, 10)  # Back to normal size
+        asterisk_width = can.stringWidth("*", FOOTER_FONT, 7)
+        can.drawString(footer_x + asterisk_width, footer_y, footer_text)
+    else:
+        # No "Corresponding" word, draw text normally
+        can.drawString(footer_x, footer_y, footer_text)
     
     can.save()
     packet.seek(0)
@@ -190,21 +203,64 @@ def process_folder(folder_path, excel_path):
     print(f"{'='*60}")
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
+    if len(sys.argv) < 3:
         print("Usage: python add_author_footer.py <pdf_folder> <excel_file>")
-        print("Example: python add_author_footer.py ./pdfs/ authors.xlsx")
+        print('Example: python add_author_footer.py ./pdfs/ authors.xlsx')
+        print('Note: Use quotes for paths with spaces on Windows:')
+        print('  python add_author_footer.py "C:\\My Folder" "data.xlsx"')
         sys.exit(1)
-    
-    folder_path = sys.argv[1]
-    excel_path = sys.argv[2]
-    
+
+    # Handle paths with spaces - find the Excel file (ends with .xlsx or .xls)
+    all_args = sys.argv[1:]
+
+    # Join all arguments and try to find xlsx/xls file
+    full_path = ' '.join(all_args)
+
+    # Try to split into folder and Excel file
+    folder_path = None
+    excel_path = None
+
+    # Method 1: If only 2 args, use them directly
+    if len(sys.argv) == 3:
+        folder_path = sys.argv[1]
+        excel_path = sys.argv[2]
+    else:
+        # Method 2: Find .xlsx or .xls in the joined path
+        import re
+        # Look for pattern: path ending with .xlsx or .xls
+        match = re.search(r'(.+?)\s+(.+\.xlsx?)$', full_path, re.IGNORECASE)
+        if match:
+            folder_path = match.group(1)
+            excel_path = match.group(2)
+        else:
+            # Method 3: Try to find existing files/folders
+            for i in range(1, len(all_args)):
+                potential_folder = ' '.join(all_args[:i])
+                potential_excel = ' '.join(all_args[i:])
+
+                if Path(potential_folder).exists() and potential_excel.lower().endswith(('.xlsx', '.xls')):
+                    folder_path = potential_folder
+                    excel_path = potential_excel
+                    break
+
+    if not folder_path or not excel_path:
+        print("❌ Error: Could not parse folder and Excel file paths")
+        print(f"   Received arguments: {sys.argv[1:]}")
+        print("   Please use quotes for paths with spaces:")
+        print('   python add_author_footer.py "C:\\Path With Spaces" "file.xlsx"')
+        sys.exit(1)
+
     if not Path(folder_path).exists():
-        print(f"Error: Folder not found: {folder_path}")
+        print(f"❌ Error: Folder not found: {folder_path}")
         sys.exit(1)
-    
+
     if not Path(excel_path).exists():
-        print(f"Error: Excel file not found: {excel_path}")
+        print(f"❌ Error: Excel file not found: {excel_path}")
         sys.exit(1)
-    
+
+    print(f"📁 PDF Folder: {folder_path}")
+    print(f"📊 Excel File: {excel_path}")
+    print()
+
     process_folder(folder_path, excel_path)
 
