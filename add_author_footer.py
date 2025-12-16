@@ -79,8 +79,8 @@ def add_footer_to_pdf(pdf_path, footer_text, output_path=None):
     can.rect(footer_x - 5, footer_y - 3, text_width + 10, 16, fill=1, stroke=0)
 
     # Add footer text (using Palatino Regular - Book Antiqua Linotype equivalent)
-    # Color: #943634 (RGB: 148/255, 54/255, 52/255)
-    can.setFillColorRGB(148/255, 54/255, 52/255)
+    # Color: Black (RGB: 0, 0, 0)
+    can.setFillColorRGB(0, 0, 0)
     can.setFont(FOOTER_FONT, 10)
 
     # Draw asterisk as superscript before "Corresponding"
