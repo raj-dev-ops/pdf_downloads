@@ -4,40 +4,55 @@ This guide covers installation for both Windows and macOS users.
 
 ---
 
-## Windows Installation (Recommended for .doc file support)
+## Windows Installation
 
 ### Prerequisites
 - Python 3.8 or higher
-- Microsoft Office installed (for .doc file conversion)
+- Microsoft Office installed (if you need .doc file conversion)
 
 ### Step 1: Update pip
 ```cmd
 python -m pip install --upgrade pip
 ```
 
-### Step 2: Install dependencies
+### Step 2: Install core dependencies
 ```cmd
 pip install -r requirements.txt
 ```
 
-**If you encounter dependency conflicts**, try one of these solutions:
+This will install all required packages. The installation should complete without errors.
 
-**Option A: Use legacy resolver**
-```cmd
-pip install -r requirements.txt --use-deprecated=legacy-resolver
+### Step 3: Legacy .doc File Support (Optional)
+
+If you need to convert legacy `.doc` files to `.docx`, choose one of these options:
+
+**Option A: Use Microsoft Word directly (Recommended if you have MS Office)**
+```python
+# Your Python code can use COM automation with win32com
+pip install pywin32
+
+# Example usage:
+import win32com.client
+word = win32com.client.Dispatch("Word.Application")
+doc = word.Documents.Open("path/to/file.doc")
+doc.SaveAs("path/to/file.docx", FileFormat=16)
+doc.Close()
+word.Quit()
 ```
 
-**Option B: Install with no dependencies check first, then fix**
+**Option B: Manually convert .doc to .docx first**
+- Open .doc files in Microsoft Word
+- Save As → .docx format
+- Then use this tool with .docx files
+
+**Option C: Install doc2docx (May have dependency issues)**
 ```cmd
-pip install --upgrade pip setuptools wheel
-pip install -r requirements.txt --use-deprecated=legacy-resolver
+# This may fail due to pywin32 version conflicts
+pip install pywin32
+pip install doc2docx --no-deps
 ```
 
-**Option C: Install packages individually (if above fails)**
-```cmd
-pip install requests beautifulsoup4 lxml click urllib3 pandas openpyxl tqdm pypdf reportlab python-docx Pillow
-pip install doc2docx
-```
+**Note:** Most modern Word documents are already in `.docx` format, so you likely don't need `.doc` support.
 
 ---
 
@@ -78,26 +93,31 @@ After installation, verify everything is working:
 
 **Windows:**
 ```cmd
-python -c "import requests, pypdf, python_docx, doc2docx; print('All packages installed successfully!')"
+python -c "import requests, pypdf, docx, PIL; print('All core packages installed successfully!')"
 ```
 
 **macOS:**
 ```bash
-python3 -c "import requests, pypdf, docx; print('All packages installed successfully!')"
+python3 -c "import requests, pypdf, docx, PIL; print('All core packages installed successfully!')"
 ```
+
+**Note:** Using `docx` (from python-docx) instead of `doc2docx` - works for .docx files on both platforms.
 
 ---
 
 ## Troubleshooting
 
-### Windows: "Cannot install doc2docx" error
-1. Make sure you have the latest pip: `python -m pip install --upgrade pip`
-2. Use the legacy resolver: `pip install -r requirements.txt --use-deprecated=legacy-resolver`
-3. Ensure Microsoft Office is installed on your system
+### Windows: "pywin32 version conflict" or "doc2docx" errors
+**Root cause:** The `doc2docx` package requires an outdated pywin32 version (305) that's no longer available.
 
-### macOS: "doc2docx not found" (This is normal)
-- doc2docx is Windows-only and will be skipped on macOS
-- You can still process .docx files using python-docx
+**Solutions:**
+1. **Skip .doc support** - Most documents are .docx anyway, core installation works fine
+2. **Use Microsoft Word COM** - Install `pip install pywin32` and use win32com.client (see Option A above)
+3. **Manual conversion** - Convert .doc to .docx in Word before processing
+
+### macOS: All packages install successfully
+- No special configuration needed
+- .docx files work out of the box with python-docx
 
 ### Both platforms: "Command not found: python"
 - Windows: Make sure Python is added to PATH during installation
@@ -117,8 +137,9 @@ python3 -c "import requests, pypdf, docx; print('All packages installed successf
 - **python-docx**: Word document (.docx) handling
 - **Pillow**: Image processing
 
-### Windows-Only
-- **doc2docx**: Legacy .doc to .docx conversion (requires MS Office)
+### Windows-Only (Optional)
+- **pywin32**: For COM automation with Microsoft Office
+- **doc2docx**: Legacy .doc to .docx conversion (has dependency conflicts, use alternatives above)
 
 ### macOS/Linux Optional
 - **wand**: ImageMagick wrapper for WMF/EMF support

@@ -13,7 +13,9 @@ Pillow>=10.0.0
 
 # Platform-specific dependencies
 # Windows only: For legacy .doc file support
-doc2docx>=0.2.0; sys_platform == "win32"
+# Note: doc2docx has dependency conflicts with newer pywin32 versions
+# Install manually if needed: pip install pywin32 && pip install doc2docx --no-deps
+# doc2docx>=0.2.0; sys_platform == "win32"
 
 # WMF/EMF Support Notes:
 # - Windows: Works natively with PIL (no additional packages needed)
