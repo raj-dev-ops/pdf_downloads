@@ -10,7 +10,10 @@ pypdf>=3.0.0
 reportlab>=4.0.0
 python-docx>=1.1.0
 Pillow>=10.0.0
-doc2docx>=0.2.0
+
+# Platform-specific dependencies
+# Windows only: For legacy .doc file support
+doc2docx>=0.2.0; sys_platform == "win32"
 
 # WMF/EMF Support Notes:
 # - Windows: Works natively with PIL (no additional packages needed)
