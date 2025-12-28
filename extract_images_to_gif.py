@@ -17,8 +17,21 @@ from typing import Tuple, List, Dict
 from docx import Document
 from docx.oxml.ns import qn
 from PIL import Image
-import doc2docx
 import platform
+
+# Optional imports for .doc file support
+try:
+    import doc2docx
+    HAS_DOC2DOCX = True
+except ImportError:
+    HAS_DOC2DOCX = False
+
+# Try to import win32com for Windows .doc conversion
+try:
+    import win32com.client
+    HAS_WIN32COM = True
+except ImportError:
+    HAS_WIN32COM = False
 
 
 def extract_document_basename(filepath: str) -> str:
@@ -271,20 +284,67 @@ def resize_to_width(image: Image.Image, target_width: int = 1500) -> Image.Image
 
 def convert_doc_to_docx(doc_path: str) -> str:
     """
-    Convert .doc file to .docx format.
+    Convert .doc file to .docx format using available methods.
+
+    Tries methods in order:
+    1. win32com (Windows with MS Office) - Recommended
+    2. doc2docx (if installed)
+    3. Error if no method available
 
     Args:
         doc_path: Path to .doc file
 
     Returns:
         Path to converted .docx file
+
+    Raises:
+        RuntimeError: If no conversion method is available
     """
     output_path = doc_path.rsplit('.', 1)[0] + '_converted.docx'
 
     print(f"Converting {doc_path} to .docx format...")
-    doc2docx.convert(doc_path, output_path)
 
-    return output_path
+    # Method 1: Try win32com (Windows with MS Office)
+    if HAS_WIN32COM:
+        try:
+            import os
+            word = win32com.client.Dispatch("Word.Application")
+            word.Visible = False
+
+            # Convert to absolute path
+            abs_doc_path = os.path.abspath(doc_path)
+            abs_output_path = os.path.abspath(output_path)
+
+            doc = word.Documents.Open(abs_doc_path)
+            doc.SaveAs(abs_output_path, FileFormat=16)  # 16 = wdFormatXMLDocument (.docx)
+            doc.Close()
+            word.Quit()
+
+            print(f"  Converted using Microsoft Word COM")
+            return output_path
+        except Exception as e:
+            print(f"  Warning: win32com conversion failed: {e}")
+            # Fall through to next method
+
+    # Method 2: Try doc2docx
+    if HAS_DOC2DOCX:
+        try:
+            doc2docx.convert(doc_path, output_path)
+            print(f"  Converted using doc2docx")
+            return output_path
+        except Exception as e:
+            print(f"  Warning: doc2docx conversion failed: {e}")
+            # Fall through to error
+
+    # No method available
+    raise RuntimeError(
+        "Cannot convert .doc files: No conversion method available.\n"
+        "Solutions:\n"
+        "  1. Install pywin32: pip install pywin32 (requires MS Office on Windows)\n"
+        "  2. Manually convert .doc to .docx in Microsoft Word\n"
+        "  3. Install doc2docx: pip install pywin32 && pip install doc2docx --no-deps\n"
+        f"\nHAS_WIN32COM={HAS_WIN32COM}, HAS_DOC2DOCX={HAS_DOC2DOCX}"
+    )
 
 
 def extract_images_from_docx(docx_path: str) -> List[Dict]:
