@@ -1,0 +1,33 @@
+Extracting images from ijrit-11-139-Figures.docx...
+Found 13 image(s)
+  Caption: 'Figure 1: MRI type 1.5 T Philips....' -> Type: g, Number: 1
+  Caption: 'Scheme 1: Set up of cyclic voltammetric technique....' -> Type: s, Number: 1
+  Caption: 'Figure 3: Cyclic voltammogram of blood with insuli...' -> Type: g, Number: 3
+  Caption: '...' -> Type: g, Number: 0
+  Caption: 'Figure 5: Cyclic voltammogram of blood with insuli...' -> Type: g, Number: 5
+  Caption: 'Figure 6: Cyclic voltammogram of blood with insuli...' -> Type: g, Number: 6
+  Caption: 'Figure 7: Cyclic voltammogram of blood with insuli...' -> Type: g, Number: 7
+  Caption: 'Figure 8: Cyclic voltammogram of blood with insuli...' -> Type: g, Number: 8
+  Caption: 'Figure 9: Cyclic voltammogram of blood with insuli...' -> Type: g, Number: 9
+  Caption: 'Figure 10: Cyclic voltammogram of blood with insul...' -> Type: g, Number: 10
+  Caption: 'Figure 11: Cyclic voltammogram of blood with insul...' -> Type: g, Number: 11
+  Caption: 'Figure 12: Cyclic voltammogram of blood with insul...' -> Type: g, Number: 12
+  Caption: 'Figure 13: Cyclic voltammogram of blood with insul...' -> Type: g, Number: 13
+
+Processing images in sorted order...
+Created: ijrit-11-139-g001.gif (1500x889)
+Created: ijrit-11-139-s001.gif (1500x734)
+Created: ijrit-11-139-g002.gif (1500x711)
+Created: ijrit-11-139-g003.gif (1500x712)
+Created: ijrit-11-139-g004.gif (1500x711)
+Created: ijrit-11-139-g005.gif (1500x711)
+Created: ijrit-11-139-g006.gif (1500x711)
+Created: ijrit-11-139-g007.gif (1500x711)
+Created: ijrit-11-139-g008.gif (1500x711)
+Created: ijrit-11-139-g009.gif (1500x711)
+Created: ijrit-11-139-g010.gif (1500x711)
+Created: ijrit-11-139-g011.gif (1500x711)
+Created: ijrit-11-139-g012.gif (1500x711)
+
+Summary: 12 figure(s), 1 scheme(s) extracted
+Output directory: ../../Downloads/extracted_gifs/ijrit-11-139-Figures
