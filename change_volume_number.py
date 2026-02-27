@@ -3,7 +3,6 @@
 Script to change volume numbers in PDF files.
 Example: "Vol. 45" -> "Vol. 47"
 """
-import urlib
 import os
 import re
 import sys
